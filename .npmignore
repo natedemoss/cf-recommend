@@ -1,0 +1,3 @@
+# What ships is controlled by the "files" allowlist in package.json.
+# This file exists so the "*.exe" rule in .gitignore does NOT strip the
+# prebuilt binaries out of the published npm tarball.

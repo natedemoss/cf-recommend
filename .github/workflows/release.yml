@@ -1,0 +1,105 @@
+name: release
+
+# Builds the native binary on every supported platform and publishes the npm
+# package (which bundles all of them). Trigger by pushing a version tag, e.g.
+#   npm version patch && git push --follow-tags
+# Requires an NPM_TOKEN secret (an npm automation token) in the repo settings.
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: build ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: linux-x64
+          - os: macos-13
+            target: darwin-x64
+          - os: macos-14
+            target: darwin-arm64
+          - os: windows-latest
+            target: win32-x64
+    steps:
+      - uses: actions/checkout@v4
+
+      # --- Linux: dynamic-link against the ubiquitous system libcurl/sqlite3 ---
+      - name: Build (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y g++ make libcurl4-openssl-dev libsqlite3-dev
+          make
+          mkdir -p binaries/${{ matrix.target }}
+          cp cf binaries/${{ matrix.target }}/cf
+
+      # --- macOS: libcurl and sqlite3 ship with the SDK ---
+      - name: Build (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          make
+          mkdir -p binaries/${{ matrix.target }}
+          cp cf binaries/${{ matrix.target }}/cf
+
+      # --- Windows: MSYS2/UCRT64, static-linked self-contained cf.exe ---
+      - name: Set up MSYS2
+        if: runner.os == 'Windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: >-
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-curl
+            mingw-w64-ucrt-x86_64-sqlite3
+            mingw-w64-ucrt-x86_64-pkgconf
+            make
+      - name: Build (Windows)
+        if: runner.os == 'Windows'
+        shell: msys2 {0}
+        run: |
+          mingw32-make
+          mkdir -p binaries/${{ matrix.target }}
+          cp cf.exe binaries/${{ matrix.target }}/cf.exe
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.target }}
+          path: binaries/${{ matrix.target }}/*
+
+  publish:
+    name: publish to npm
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Download all binaries
+        uses: actions/download-artifact@v4
+        with:
+          path: binaries
+
+      # upload-artifact drops the executable bit, so restore it before packing.
+      - name: Make Unix binaries executable
+        run: |
+          chmod +x binaries/linux-x64/cf || true
+          chmod +x binaries/darwin-x64/cf || true
+          chmod +x binaries/darwin-arm64/cf || true
+          ls -lR binaries
+
+      - name: Publish
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

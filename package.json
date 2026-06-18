@@ -1,0 +1,41 @@
+{
+  "name": "cf-recommend",
+  "version": "0.1.0",
+  "description": "Codeforces practice recommender: analyses your submission history and recommends problems to solve next, focused on your weak topics. Ships a prebuilt native binary — no C++ compiler needed.",
+  "bin": {
+    "cf": "bin/cf.js",
+    "cf-recommend": "bin/cf.js"
+  },
+  "files": [
+    "bin/",
+    "binaries/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node bin/cf.js help"
+  },
+  "keywords": [
+    "codeforces",
+    "competitive-programming",
+    "cli",
+    "recommender",
+    "cp",
+    "practice",
+    "problems",
+    "rating"
+  ],
+  "engines": {
+    "node": ">=14"
+  },
+  "author": "nathandemoss <ndemoss28@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nathandemoss/cf-recommend.git"
+  },
+  "homepage": "https://github.com/nathandemoss/cf-recommend#readme",
+  "bugs": {
+    "url": "https://github.com/nathandemoss/cf-recommend/issues"
+  }
+}
