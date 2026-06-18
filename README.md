@@ -13,8 +13,6 @@
 npm install -g cf-recommend
 ```
 
-No browser. No account linking. No C++ compiler. Just your handle.
-
 </div>
 
 ---
@@ -111,37 +109,7 @@ cf config max-rating 1700
 - Cached in SQLite: `~/.cf-recommend/` (Unix) or `%LOCALAPPDATA%\cf-recommend\` (Windows)
 - `analyze`, `next`, `weak-topics`, `progress` work offline; run `cf sync` to refresh
 
-## Install from Source
 
-Requires C++17 compiler + **libcurl** & **sqlite3** development libraries.
-
-<details>
-<summary><b>Windows (MSYS2 / UCRT64)</b></summary>
-
-```sh
-pacman -S mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-curl mingw-w64-ucrt-x86_64-sqlite3 mingw-w64-ucrt-x86_64-pkgconf
-mingw32-make
-```
-</details>
-
-<details>
-<summary><b>Linux / macOS</b></summary>
-
-```sh
-# Debian/Ubuntu:  sudo apt install g++ libcurl4-openssl-dev libsqlite3-dev
-# macOS:          xcode-select --install
-make
-sudo cp cf /usr/local/bin/
-```
-</details>
-
-<details>
-<summary><b>CMake</b></summary>
-
-```sh
-cmake -S . -B build && cmake --build build
-```
-</details>
 
 ## Contributing & Roadmap
 
