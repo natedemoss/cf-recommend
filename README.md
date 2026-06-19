@@ -90,6 +90,79 @@ cf next --topic dp --difficulty 1400-1600 --count 5
 cf config max-rating 1700
 ```
 
+### More examples
+
+The outputs below were generated after `cf login SecondThread`. When a problem
+has several tags, the output highlights the tag that most influenced the
+recommendation, even if a different `--topic` filter also matched it.
+
+Find DP problems in a medium rating band:
+
+```sh
+cf next --topic dp --difficulty 2000-2300 --count 1
+```
+
+```text
+Top 1 problems for SecondThread  (solving level ~2256)  [max 2300]
+
+1. 1721E  rating 2200  ·  String Suffix Structures [weak area]
+   Prefix Function Queries
+   Why: You're only 63% proficient in String Suffix Structures — focused practice on a weak area.
+   For you: Medium  (feels like ~2275)   Est. 25-40 min
+   https://codeforces.com/problemset/problem/1721/E
+```
+
+Focus a specific weak area with a rating cap:
+
+```sh
+cf next --topic meet-in-the-middle --max-rating 2200 --count 1
+```
+
+```text
+Top 1 problems for SecondThread  (solving level ~2256)  [max 2200]
+
+1. 1006F  rating 2100  ·  Meet-In-The-Middle [weak area]
+   Xor-Paths
+   Why: You're only 60% proficient in Meet-In-The-Middle — focused practice on a weak area.
+   For you: Medium  (feels like ~2180)   Est. 25-40 min
+   https://codeforces.com/problemset/problem/1006/F
+```
+
+Use a shorthand topic name:
+
+```sh
+cf next --topic binsearch --count 1
+```
+
+```text
+Top 1 problems for SecondThread  (solving level ~2256)
+
+1. 1537E2  rating 2200  ·  String Suffix Structures [weak area]
+   Erase and Extend (Hard Version)
+   Why: You're only 63% proficient in String Suffix Structures — focused practice on a weak area.
+   For you: Medium  (feels like ~2275)   Est. 25-40 min
+   https://codeforces.com/problemset/problem/1537/E2
+```
+
+Save a default max rating for future recommendations:
+
+```sh
+cf config max-rating 1900
+cf next --topic graphs --count 1
+```
+
+```text
+Set max-rating to 1900  — `cf next` will only suggest problems at or below this rating.
+
+Top 1 problems for SecondThread  (solving level ~2256)  [max 1900]
+
+1. 20C  rating 1900  ·  Shortest Paths
+   Dijkstra?
+   Why: Solid Shortest Paths problem near your level.
+   For you: Easy  (feels like ~1928)   Est. 15-25 min
+   https://codeforces.com/problemset/problem/20/C
+```
+
 ## How It Works
 
 **Adaptive Solving Level:** Based on the 80th percentile of your solved ratings (blended 50/50 with your Codeforces rating). Falls back to your CF rating or 1400 for new accounts.
